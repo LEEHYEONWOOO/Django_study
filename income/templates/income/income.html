@@ -1,0 +1,92 @@
+{% load static %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
+
+<form action="{% url 'income:income' %}" class="row gy-2 gx-3 align-items-center" hx-push-url="true" hx-get="/income/" hx-target="#content_load">
+    <div class="col-auto">
+        <input type="date" name="search_date_required" class="form_control" required>
+    </div>
+
+    <div class="col-auto">
+        <select name="select_route" class="form_control">
+            <option value="">노선 전체</option>
+            {% for row in route %}
+                <option value="{{row.id}}">{{ row }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <select name="is_profit" class="form_control">
+            <option value="">영리구분 전체</option>
+            <option value="1">수익</option>
+            <option value="0">비수익</option>
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <button type='submit' class="btn btn-outline-primary btn-sm col_min" >조회</button>
+    </div>
+
+</form>
+
+<div class="overflow-auto">
+<table class="income_table">
+    <thead>
+        <tr>
+            <th>노선</th>
+            <th>승무주임A</th>
+            <th>승무주임B</th>
+            <th>교통카드</th>
+            <th>환승금</th>
+            <th>동전</th>
+            <th>지폐</th>
+            <th>수지금액</th>
+            <th>예비금차액</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in search_result %}
+            {% if row.avg_card_smt %}
+                <tr>
+                    <td style="background-color: #faffeb" colspan="3">평균</td>
+                    <td style="background-color: #faffeb">{{ row.avg_card_smt }}</td>
+                    <td style="background-color: #faffeb">{{ row.avg_card_transfer }}</td>
+                    <td style="background-color: #faffeb">{{ row.avg_coin_tot }}</td>
+                    <td style="background-color: #faffeb">{{ row.avg_cash_paper }}</td>
+                    <td style="background-color: #faffeb">{{ row.avg_income_tot }}</td>
+                    <td style="background-color: #faffeb"></td>
+                </tr>
+            {% elif row.all_card_smt %}
+                <tr>
+                    <td style="background-color: #fEf2f2" colspan="3">합계</td>
+                    <td style="background-color: #fEf2f2">{{ row.all_card_smt }}</td>
+                    <td style="background-color: #fEf2f2">{{ row.all_card_transfer }}</td>
+                    <td style="background-color: #fEf2f2">{{ row.all_coin_tot }}</td>
+                    <td style="background-color: #fEf2f2">{{ row.all_cash_paper }}</td>
+                    <td style="background-color: #fEf2f2">{{ row.all_income_tot }}</td>
+                    <td style="background-color: #fEf2f2"></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>{{ row.route }}</td>
+                    <td>{{ row.emp_a }}</td>
+                    <td>{% if row.emp_b %}
+                        {{ row.emp_b }}
+                        {% else %}
+                        {% endif %}</td>
+                    <td>{{ row.card_smt }}</td>
+                    <td>{{ row.card_transfer }}</td>
+                    <td>{{ row.coin_tot }}</td>
+                    <td>{{ row.cash_paper }}</td>
+                    <td>{{ row.income_tot }}</td>
+                    <td>{{ row.reverse_diff }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+
+    </tbody>
+</table>
+</div>
+

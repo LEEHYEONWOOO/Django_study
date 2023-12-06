@@ -1,0 +1,9 @@
+<form action="{% url 'polls:create_q' %}" method="post">
+      {% csrf_token %}
+<div>
+    {{ form }}
+</div>
+    <button type="submit">
+        질문생성
+    </button>
+</form>

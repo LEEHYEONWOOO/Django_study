@@ -1,0 +1,48 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<form action="{% url 'polls:vote' question.id %}" method="post" class="q1_form">
+{% csrf_token %}
+
+<fieldset>
+    <legend><h1>{{ question.question_text }}</h1></legend>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% for choice in question.choice_set.all %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+    {% endfor %}
+</fieldset>
+<button type="submit">투표하기</button>
+</form>
+
+{#<hr>#}
+
+<div class="test-box">
+    <form id="myForm" method="get" class="test-class">
+      {% csrf_token %}
+      <div class="q_form">
+          <div>
+              {{ form }}
+          </div>
+
+          <button type="button" onclick="submitForm()">다른 질문으로 이동</button>
+      </div>
+    </form>
+</div>
+
+<script>
+  function submitForm() {
+    var selectBox = document.getElementById('myForm').querySelector('select');
+    var selectedValue = selectBox.value;
+    console.log("선택 박스 : " + selectBox);
+    console.log("선택값 : " + selectedValue);
+
+    var goto = '{% url "polls:detail" pk=0 %}'.replace('0', selectedValue);
+
+    document.getElementById('myForm').action = goto;
+
+    console.log(goto + "   로 이동")
+
+    document.getElementById('myForm').submit();
+  }
+</script>
